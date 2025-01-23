@@ -49,6 +49,7 @@ class Program:
         plt.title(f"Спектр цифрового сигнала {freq} Гц")
         plt.xlabel("Частота (Гц)")
         plt.ylabel("Амплитуда")
+        plt.xlim(0, 50)
         plt.grid(True)
 
         plt.tight_layout()
