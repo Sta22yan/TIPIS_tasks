@@ -7,7 +7,7 @@ class Program:
     def __init__(self):
         self.samplingRate = 1000
         self.duration = 2
-        self.time = np.linspace(0, self.duration, self.samplingRate * self.duration, endpoint=False)
+        self.time = np.linspace(0, self.duration, self.samplingRate, endpoint=False)
 
         self.carrierFreq = 10
         self.modulationFreq = 1
@@ -44,6 +44,13 @@ class Program:
         normalCutoff = self.maxCutoff / nyq
         b, a = butter(5, normalCutoff, btype='low', analog=False)
         return filtfilt(b, a, signal)
+        
+    def getComparedSignal(self, filteredSignal):
+        envelope = np.abs(hilbert(filteredSignal))
+
+        meanEnvelope = np.mean(envelope)
+
+        return (envelope > meanEnvelope).astype(float)
 
     def showPlots(self, harmonicSignal, modulatingSignal, signalAM, freqAM, spectrAM, signalFM, freqFM, spectrFM, signalPM, freqPM, spectrPM, synthesizedSignal, filteredSignal):
         plt.figure(figsize=(10, 5))
@@ -115,6 +122,14 @@ class Program:
         plt.grid()
         plt.show()
 
+        plt.figure(figsize=(10, 5))
+        plt.plot(self.time, self.getComparedSignal(filteredSignal), label="Итоговый сигнал")
+        plt.xlabel("Время (с)")
+        plt.ylabel("Амплитуда")
+        plt.legend(loc='right', bbox_to_anchor=(1.1, 1.1), ncol=1)
+        plt.grid()
+        plt.show()
+        
     def start(self):
         harmonicSignal = self.getHarmonicSignal()
         modulatingSignal = self.getModulatingSignal()
